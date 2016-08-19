@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
@@ -33,7 +34,7 @@ void Record::addRecord() {
 	getline(cin, firstName);
 	cout << "Enter your last name: ";
 	getline(cin, lastName);
-	cout << "Enter your current balance: ";
+	cout << "Enter your current balance (dollars & cents): ";
 	cin >> balance;
 
 	ofstream data;
@@ -42,15 +43,18 @@ void Record::addRecord() {
 	data << "Account Number: " << accountNumber << "\n";
 	data << "First Name: " << firstName << "\n";
 	data << "Last Name: " << lastName << "\n";
-	data << "Balance: " << balance << "\n";
+	data.precision(2);
+	data << "Balance: $" << fixed << balance << "\n";
 	data << "\n";
 
 	data.close();
+	system("clear");
+	menu();
 }
 
 void Record::menu() {
 	cout << "\n***** Bank Management System *****" << endl;
-	cout << "Select an option below: (1-5)" << endl;
+	cout << "Select an option below: (1-6)" << endl;
 	cout << "	1. Add a bank account" << endl;
 	cout << "	2. Show an existing bank account" << endl;
 	cout << "	3. Edit a bank account" << endl;
@@ -108,6 +112,11 @@ void Record::menu() {
 				
 			break;
 		}
+		case 6:
+		{
+			system("clear");
+			exit(0);
+		}
 		default:
 			system("clear");
 			cout << i << " is not a valid command. Please try again" << endl;
@@ -135,11 +144,11 @@ void Record::findRecord(string key) {
 		}
 	}
 	file.close();
+	menu();
 }
 
 void Record::editRecord(string key) {
-	//cout << "Enter account number: " << endl;
-	//cin >> key;
+	system("clear");
 	cout << "Which part of account number " << key << " would you like to edit?" << endl;
 	cout << "	1. First Name" << endl;
 	cout << "	2. Last Name" << endl;
@@ -177,6 +186,7 @@ void Record::editRecord(string key) {
 			}
 			file.close();
 			data.close();
+			menu();
 			break;
 		}
 		case 2:
@@ -210,12 +220,18 @@ void Record::editRecord(string key) {
 			}
 			file.close();
 			data.close();
+			menu();
 			break;
+		}
+		case 3:
+		{
+			menu();
 		}
 	}
 }
 
 void Record::deleteRecord(string key) {
+	system("clear");
 	cout << "Delete record with account number " << key << "? (y/n)" << endl;
 	string choice;
 	cin >> choice;
@@ -241,8 +257,25 @@ void Record::deleteRecord(string key) {
 				}
 			}
 		}
+		ifstream numbers;
+		ofstream tempNumbers;
+		numbers.open("numbers.txt");
+		tempNumbers.open("tempNumbers.txt");
+		string number;
+		while(getline(numbers, number)) {
+			if(number != key) {
+				tempNumbers << number << endl;
+			}
+		}
 		file.close();
 		data.close();
+		numbers.close();
+		tempNumbers.close();
+		cout << "Bank account number " << key << " has been deleted.\n\n";
+		menu();
+	}
+	else if(choice == "n") {
+		menu();
 	}
 }
 
@@ -267,15 +300,18 @@ void Record::deposit(string key) {
 				}
 				else if(record.find("Balance") != string::npos) {
 					record.erase(0, 9);
+					cout << "r: " << record << endl;
 					balance = atof(record.c_str());
 					balance += amount;
-					data << "Balance: " << balance << "\n\n";
+					data.precision(2);
+					data << "Balance: $" << fixed << balance << "\n\n";
 				}
 			}
 		}
 	}
 	file.close();
 	data.close();
+	menu();
 }
 
 void Record::withdraw(string key) {
@@ -298,7 +334,7 @@ void Record::withdraw(string key) {
 					data << record << "\n";
 				}
 				else if(record.find("Balance") != string::npos) {
-					record.erase(0, 9);
+					record.erase(0, 10);
 					balance = atof(record.c_str());
 					if(amount > balance) {
 						cout << "Cannot withdraw " << amount << ". Insufficient funds.";
@@ -306,7 +342,8 @@ void Record::withdraw(string key) {
 					}
 					else {
 						balance -= amount;
-						data << "Balance: " << balance << "\n";
+						data.precision(2);
+						data << "Balance: $" << fixed << balance << "\n";
 						while(getline(file, line)) {
 							data << line << "\n";
 						}
@@ -317,6 +354,7 @@ void Record::withdraw(string key) {
 	}
 	file.close();
 	data.close();
+	menu();
 }
 
 void Record::checkAccountNumber(int key) {
@@ -328,7 +366,6 @@ void Record::checkAccountNumber(int key) {
 	while(getline(file, line) && line != "") {
 		int number;
 		number = atof(line.c_str());
-		cout << number << endl;
 		if(number == key) {
 			cout << "Account number " << key << " already exists. Please try again." << endl;
 			addRecord();
@@ -360,9 +397,11 @@ void Record::readRecord() const {
 	cout << "First Name: " << getFirstName() << endl;
 	cout << "Last Name: " << getLastName() << endl;
 	cout << "Balance: " << getBalance() << endl;
+	cout << endl;
 }
 
 int main() {
+	system("clear");
 	Record record;
 	record.menu();
 }

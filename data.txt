@@ -1,25 +1,40 @@
 Account Number: 12
 First Name: A
 Last Name: B
-Balance: 234.56
+Balance: $234.56
 
 Account Number: 4
 First Name: D
 Last Name: A
-Balance: 1234
+Balance: $1234.78
 
 Account Number: 34
 First Name: E
 Last Name: W
-Balance: 456
+Balance: $456.00
 
 Account Number: 5678
 First Name: ABC
 Last Name: DEF
-Balance: 653.87
+Balance: $653.87
 
 Account Number: 321
 First Name: test
 Last Name: maker
-Balance: 7777.21
+Balance: $7777.20
+
+Account Number: 84
+First Name: Antonio
+Last Name: Brown
+Balance: $1896.00
+
+Account Number: 7
+First Name: big
+Last Name: ben
+Balance: $70.00
+
+Account Number: 26
+First Name: l
+Last Name: bell
+Balance: $26.70
 
