@@ -320,14 +320,12 @@ void Record::withdraw(string key) {
 }
 
 void Record::checkAccountNumber(int key) {
-	cout << "in function" << endl;
 	ifstream file;
 	ofstream numbers;
 	file.open("numbers.txt");
 	numbers.open("numbers.txt", ios::app);
 	string line;
 	while(getline(file, line) && line != "") {
-		cout << "in loop" << endl;
 		int number;
 		number = atof(line.c_str());
 		cout << number << endl;
