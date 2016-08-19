@@ -17,7 +17,7 @@ Record::Record(int accountNumber, string firstName, string lastName, double bala
 	this->lastName = lastName;
 	this->balance = balance;
 }
-/////////////////////////////////////// need to finish addRecord() ///////////////////////////////////////
+
 void Record::addRecord() {
 	int accountNumber;
 	string firstName;
@@ -25,6 +25,8 @@ void Record::addRecord() {
 	double balance;
 	cout << "Create an account number: ";
 	cin >> accountNumber;
+	checkAccountNumber(accountNumber);
+
 	string space;
 	getline(cin, space);
 	cout << "Enter your first name: ";
@@ -250,28 +252,93 @@ void Record::deposit(string key) {
 	cin >> amount;
 
 	ifstream file;
+	ofstream data;
 	file.open("data.txt");
+	data.open("temp.txt");
 	string line;
 	double balance;
 	while(getline(file, line)) {
+		data << line << "\n";
 		if(line == "Account Number: " + key) {
 			string record;
 			while(getline(file, record) && record != "") {
-				if(record.find("Balance") != string::npos) {
+				if(!(record.find("Balance") != string::npos)) {
+					data << record << "\n";
+				}
+				else if(record.find("Balance") != string::npos) {
 					record.erase(0, 9);
-					cout << record << endl;
 					balance = atof(record.c_str());
 					balance += amount;
-					cout << balance << endl;
+					data << "Balance: " << balance << "\n\n";
 				}
 			}
 		}
 	}
 	file.close();
+	data.close();
 }
 
 void Record::withdraw(string key) {
+	cout << "How much would you like to withdraw from bank account " << key << "?" << endl;
+	double amount;
+	cin >> amount;
 
+	ifstream file;
+	ofstream data;
+	file.open("data.txt");
+	data.open("temp.txt");
+	string line;
+	double balance;
+	while(getline(file, line)) {
+		data << line << "\n";
+		if(line == "Account Number: " + key) {
+			string record;
+			while(getline(file, record) && record != "") {
+				if(!(record.find("Balance") != string::npos)) {
+					data << record << "\n";
+				}
+				else if(record.find("Balance") != string::npos) {
+					record.erase(0, 9);
+					balance = atof(record.c_str());
+					if(amount > balance) {
+						cout << "Cannot withdraw " << amount << ". Insufficient funds.";
+						menu();
+					}
+					else {
+						balance -= amount;
+						data << "Balance: " << balance << "\n";
+						while(getline(file, line)) {
+							data << line << "\n";
+						}
+					}
+				}
+			}
+		}
+	}
+	file.close();
+	data.close();
+}
+
+void Record::checkAccountNumber(int key) {
+	cout << "in function" << endl;
+	ifstream file;
+	ofstream numbers;
+	file.open("numbers.txt");
+	numbers.open("numbers.txt", ios::app);
+	string line;
+	while(getline(file, line) && line != "") {
+		cout << "in loop" << endl;
+		int number;
+		number = atof(line.c_str());
+		cout << number << endl;
+		if(number == key) {
+			cout << "Account number " << key << " already exists. Please try again." << endl;
+			addRecord();
+		}
+	}
+	numbers << key << "\n";
+	file.close();
+	numbers.close();
 }
 
 int Record::getAccountNumber() const {
