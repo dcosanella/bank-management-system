@@ -49,6 +49,7 @@ void Record::addRecord() {
 
 	data.close();
 	system("clear");
+	cout << "Bank account " << accountNumber << " has been created." << endl;
 	menu();
 }
 
@@ -91,6 +92,9 @@ void Record::menu() {
 				record.deleteRecord(number);
 			}
 			else if(i == 5) {
+				if(!(checkAccount(number))) {
+					menu();
+				}
 				cout << "Choose a type of transaction" << endl;
 				cout << "	1. Deposit" << endl;
 				cout << "	2. Withdraw" << endl;
@@ -127,10 +131,12 @@ void Record::menu() {
 
 void Record::findRecord(string key) {
 	string line;
+	int i = 0;
 	ifstream file;
 	file.open("data.txt");
 	while(getline(file, line)) {
 		if(line == "Account Number: " + key) {
+			i++;
 			system("clear");
 			cout << line << endl;
 			string record;
@@ -139,15 +145,20 @@ void Record::findRecord(string key) {
 			}
 			break;
 		}
-		else if(file.eof()) {
-			cout << "Account Number " << key << " not found." << endl;
-		}
+	}
+	if(i == 0) {
+		system("clear");
+		cout << "Account Number " << key << " not found." << endl;
 	}
 	file.close();
 	menu();
 }
 
 void Record::editRecord(string key) {
+	if(!(checkAccount(key))) {
+		menu();
+	}
+
 	system("clear");
 	cout << "Which part of account number " << key << " would you like to edit?" << endl;
 	cout << "	1. First Name" << endl;
@@ -185,7 +196,9 @@ void Record::editRecord(string key) {
 				}
 			}
 			file.close();
+			remove("data.txt");
 			data.close();
+			rename("temp.txt", "data.txt");
 			menu();
 			break;
 		}
@@ -219,7 +232,9 @@ void Record::editRecord(string key) {
 				}
 			}
 			file.close();
+			remove("data.txt");
 			data.close();
+			rename("temp.txt", "data.txt");
 			menu();
 			break;
 		}
@@ -231,7 +246,10 @@ void Record::editRecord(string key) {
 }
 
 void Record::deleteRecord(string key) {
-	system("clear");
+	if(!(checkAccount(key))) {
+		menu();
+	}
+
 	cout << "Delete record with account number " << key << "? (y/n)" << endl;
 	string choice;
 	cin >> choice;
@@ -258,8 +276,8 @@ void Record::deleteRecord(string key) {
 			}
 		}
 		ifstream numbers;
-		ofstream tempNumbers;
 		numbers.open("numbers.txt");
+		ofstream tempNumbers;
 		tempNumbers.open("tempNumbers.txt");
 		string number;
 		while(getline(numbers, number)) {
@@ -268,9 +286,13 @@ void Record::deleteRecord(string key) {
 			}
 		}
 		file.close();
+		remove("data.txt");
 		data.close();
+		rename("temp.txt", "data.txt");
 		numbers.close();
+		remove("numbers.txt");
 		tempNumbers.close();
+		rename("tempNumbers.txt", "numbers.txt");
 		cout << "Bank account number " << key << " has been deleted.\n\n";
 		menu();
 	}
@@ -310,7 +332,9 @@ void Record::deposit(string key) {
 		}
 	}
 	file.close();
+	remove("data.txt");
 	data.close();
+	rename("temp.txt", "data.txt");
 	menu();
 }
 
@@ -353,7 +377,9 @@ void Record::withdraw(string key) {
 		}
 	}
 	file.close();
+	remove("data.txt");
 	data.close();
+	rename("temp.txt", "data.txt");
 	menu();
 }
 
@@ -374,6 +400,30 @@ void Record::checkAccountNumber(int key) {
 	numbers << key << "\n";
 	file.close();
 	numbers.close();
+}
+
+bool Record::checkAccount(string key) {
+	bool account = true;
+	system("clear");
+	ifstream numbers;
+	numbers.open("numbers.txt");
+	string n;
+	int i = 0, j = 0;
+	while(getline(numbers, n)) {
+		if(n != key) {
+			i++;
+			j++;
+		}
+		else {
+			j--;
+		}
+	}
+	if(i == j) {
+		account = false;
+		cout << "Bank account " << key << " does not exist. Returning to main menu." << endl;
+		numbers.close();
+ 	}
+ 	return account;
 }
 
 int Record::getAccountNumber() const {

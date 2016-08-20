@@ -18,6 +18,7 @@ class Record
 		void deposit(string key);
 		void withdraw(string key);
 		void checkAccountNumber(int key);
+		bool checkAccount(string key);
 		int getAccountNumber() const;
 		string getFirstName() const;
 		string getLastName() const;
