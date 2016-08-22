@@ -179,7 +179,6 @@ void Record::editRecord(string key) {
 			while(getline(file, line)) {
 				data << line << "\n";
 				if(line == "Account Number: " + key) {
-					cout << "I am here!!!!!" << endl;
 					string record;
 					while(getline(file, record) && record != "") {
 						cout << "Enter your first name: ";
@@ -212,7 +211,6 @@ void Record::editRecord(string key) {
 			while(getline(file, line)) {
 				data << line << "\n";
 				if(line == "Account Number: " + key) {
-					cout << "I am here!!!!!" << endl;
 					string record;
 					while(getline(file, record) && record != "") {
 						if(record.find("First") != string::npos) {
